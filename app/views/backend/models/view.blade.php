@@ -64,7 +64,7 @@ View Model {{ $model->model_tag }} ::
                             <div class="col-md-6">
 								<div class="alert alert-info alert-block">
 									<i class="icon-info-sign"></i>
-									@lang('general.noresults')
+									@lang('general.no_results')
 								</div>
 							</div>
                             @endif

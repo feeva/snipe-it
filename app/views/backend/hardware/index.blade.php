@@ -122,7 +122,7 @@
 <div class="col-md-9">
 	<div class="alert alert-info alert-block">
 		<i class="icon-info-sign"></i>
-		@lang('general.noresults')
+		@lang('general.no_results')
 	</div>
 </div>
 
