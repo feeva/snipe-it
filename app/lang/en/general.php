@@ -46,5 +46,7 @@ return array(
 	'undeployable'	=> 'Un-deployable',
 	'list_all'	=> 'List All',
 	'asset_models'	=> 'Asset Models',
+	
+	'no_results'	=> 'There are no results for your query.',
 )
 ;

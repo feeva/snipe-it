@@ -64,7 +64,7 @@ View Model {{ $model->model_tag }} ::
                             <div class="col-md-6">
 								<div class="alert alert-info alert-block">
 									<i class="icon-info-sign"></i>
-									There are no results for your query.
+									@lang('general.noresults')
 								</div>
 							</div>
                             @endif
