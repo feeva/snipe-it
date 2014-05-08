@@ -20,12 +20,12 @@ Asset Models ::
 <table id="example">
 	<thead>
 		<tr role="row">
-			<th class="col-md-3">@lang('admin/models/table.title')</th>
+			<th class="col-md-2">@lang('admin/models/table.title')</th>
 			<th class="col-md-2">@lang('admin/models/table.modelnumber')</th>
 			<th class="col-md-1">@lang('admin/models/table.numassets')</th>
-			<th class="col-md-2">Depreciation</th>
-			<th class="col-md-2">Category</th>
-			<th class="col-md-2">EOL</th>
+			<th class="col-md-2">@lang('admin/models/table.depreciation')</th>
+			<th class="col-md-2">@lang('admin/models/table.category')</th>
+			<th class="col-md-1">@lang('admin/models/table.eol')</th>
 			<th class="col-md-2 actions">@lang('table.actions')</th>
 		</tr>
 	</thead>
@@ -39,9 +39,9 @@ Asset Models ::
 
 			@if (($model->depreciation) && ($model->depreciation->id > 0))
 				{{ $model->depreciation->name }}
-			 	({{ $model->depreciation->months }} months)
+			 	({{ $model->depreciation->months }} @lang('admin/depreciations/table.months')&#41;
 			@else
-			 No Depreciation
+				@lang('admin/models/table.no_depreciation')
 			@endif
 
 			</td>
@@ -54,7 +54,7 @@ Asset Models ::
 			<td>
 
 			@if ($model->eol)
-			 	{{ $model->eol }} months
+			 	{{ $model->eol }} @lang('admin/depreciations/table.months')
 			@else
 			 --
 			@endif

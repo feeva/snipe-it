@@ -14,5 +14,7 @@ return array(
 	'change' => '반납/반출',
 	'location' => '현 위치',
 	'eol' => 'EOL',
+	'diff' => '차액',
+	'dl_csv' => 'CSV 다운로드',
 
 );

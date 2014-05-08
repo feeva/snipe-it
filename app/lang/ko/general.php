@@ -40,8 +40,8 @@ return array(
 	'depreciation'	=> '자산 상각',
 	
 	'sign_in'	=> '로그인',
-	'deployed'	=> '업무 배치',
-	'ready_to_deploy'=> '배치 대기',
+	'deployed'	=> '업무 배치 중',
+	'ready_to_deploy'=> '배치 대기 중',
 	'pending'	=> '미정',
 	'undeployable'	=> '배치 불가',
 	'list_all'	=> '전체 목록',
