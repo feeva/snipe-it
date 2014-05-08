@@ -331,7 +331,8 @@
                 "sPaginationType": "full_numbers",
                 "iDisplayLength": {{ Setting::getSettings()->per_page }},
                 "aLengthMenu": [[{{ Setting::getSettings()->per_page }}, -1], [{{ Setting::getSettings()->per_page }}, "All"]],
-                "aoColumnDefs": [{ 'bSortable': false, 'aTargets': [ 'actions' ] }]
+                "aoColumnDefs": [{ 'bSortable': false, 'aTargets': [ 'actions' ] }],
+                "oLanguage": { sSearch: "@lang('table.search')" }
             });
 
 			$('#nosorting').dataTable({

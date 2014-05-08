@@ -2,6 +2,7 @@
 
 return array(
 
-	'actions' => '작업'
+	'actions' => '작업',
+	'search' => '검색:'
 
 );

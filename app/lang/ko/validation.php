@@ -77,7 +77,7 @@ return array(
 	*/
 
 	'custom' => array(),
-	'alpha_space' => "The :attribute field may only contain letters, commas, spaces and dashes.",
+	'alpha_space' => "문자, 숫자, 콤마, 대시, 공백 글자만 입력하실 수 있습니다.",
 
 	/*
 	|--------------------------------------------------------------------------
