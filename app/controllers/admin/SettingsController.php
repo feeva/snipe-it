@@ -38,7 +38,8 @@ class SettingsController extends AdminController {
 	public function getEdit()
 	{
 		$settings = Setting::orderBy('created_at', 'DESC')->paginate(10);
-		return View::make('backend/settings/edit', compact('settings'));
+		$is_gd_installed = extension_loaded('gd');
+		return View::make('backend/settings/edit', compact('settings', 'is_gd_installed'));
 	}
 
 
@@ -65,6 +66,7 @@ class SettingsController extends AdminController {
 		$rules = array(
 		"site_name" 	=> 'required|min:3',
 		"per_page"   		=> 'required|min:1|numeric',
+		"qr_text"		=> 'min:1|max:31'
     	);
 
 		// Create a new validator instance from our validation rules
@@ -82,6 +84,8 @@ class SettingsController extends AdminController {
 			$setting->id = '1';
 			$setting->site_name = e(Input::get('site_name'));
 			$setting->per_page = e(Input::get('per_page'));
+			$setting->qr_code = e(Input::get('qr_code', '0'));
+			$setting->qr_text = e(Input::get('qr_text'));
 
 			// Was the asset updated?
 			if($setting->save())

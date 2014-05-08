@@ -17,8 +17,15 @@ use Str;
 use Validator;
 use View;
 use Response;
+use Config;
+use Location;
+use Log;
+
+use BaconQrCode\Renderer\Image as QrImage;
 
 class AssetsController extends AdminController {
+
+	protected $qrCodeDimensions = array( 'height' => 170, 'width' => 170);
 
 	/**
 	 * Show a list of all the assets.
@@ -90,7 +97,8 @@ class AssetsController extends AdminController {
 			Lang::get('admin/hardware/table.location'),
 			Lang::get('admin/hardware/table.purchase_date'),
 			Lang::get('admin/hardware/table.purchase_cost'),
-			Lang::get('admin/hardware/table.book_value')
+			Lang::get('admin/hardware/table.book_value'),
+			Lang::get('admin/hardware/table.diff')
 		);
 		$header = array_map('trim', $header);
 		$rows[] = implode($header, ',');
@@ -101,19 +109,25 @@ class AssetsController extends AdminController {
 			$row[] = $asset->asset_tag;
 			$row[] = $asset->name;
 			$row[] = $asset->serial;
-			$row[] = $asset->assigned_to;
+
 
 			if ($asset->assigned_to > 0) {
 			  $user = User::find($asset->assigned_to);
 			  $row[] = $user->fullName();
-		  }
-		  else {
-		  	$row[] = ''; // Empty string if unassigned
-		  }
+			  }
+			else {
+				$row[] = ''; // Empty string if unassigned
+			}
 
 			if (($asset->assigned_to > 0) && ($asset->assigneduser->location_id > 0)) {
 				$location = Location::find($asset->assigneduser->location_id);
-				$row[] = $location->city . ', ' . $location->state;
+				if ($location->city) {
+					$row[] = '"'.$location->city . ', ' . $location->state.'"';
+				} elseif ($location->name) {
+					$row[] = $location->name;
+				} else {
+					$row[] = '';
+				}
 			}
 			else {
 				$row[] = '';  // Empty string if location is not set
@@ -122,9 +136,9 @@ class AssetsController extends AdminController {
 			$depreciation = $asset->depreciate();
 
 			$row[] = $asset->purchase_date;
-			$row[] = number_format($asset->purchase_cost);
-			$row[] = number_format($depreciation);
-			$row[] = number_format(($asset->purchase_cost - $depreciation));
+			$row[] = '"'.number_format($asset->purchase_cost).'"';
+			$row[] = '"'.number_format($depreciation).'"';
+			$row[] = '"'.number_format($asset->purchase_cost - $depreciation).'"';
 			$rows[] = implode($row, ',');
 		}
 
@@ -527,15 +541,59 @@ class AssetsController extends AdminController {
 		$asset = Asset::find($assetId);
 
 		if (isset($asset->id)) {
-				return View::make('backend/hardware/view', compact('asset'));
+
+			$settings = Setting::getSettings();
+
+			$qr_code = (object) array(
+				'display' => $settings->qr_code == '1',
+				'height' => $this->qrCodeDimensions['height'],
+				'width' => $this->qrCodeDimensions['width'],
+				'url' => route('qr_code/hardware', $asset->id)
+			);
+
+			return View::make('backend/hardware/view', compact('asset', 'qr_code'));
 		} else {
 			// Prepare the error message
-			$error = Lang::get('admin/hardware/message.does_not_exist', compact('id' ));
+			$error = Lang::get('admin/hardware/message.does_not_exist', compact('id'));
 
 			// Redirect to the user management page
 			return Redirect::route('assets')->with('error', $error);
 		}
 
+	}
+
+	/**
+	*  Get the QR code representing the asset
+	*
+	* @param  int  $assetId
+	* @return View
+	**/
+	public function getQrCode($assetId = null)
+	{
+		$settings = Setting::getSettings();
+
+		if ($settings->qr_code == '1') {
+			$asset = Asset::find($assetId);
+			if (isset($asset->id)) {
+
+
+				$renderer = new \BaconQrCode\Renderer\Image\Png;
+				$renderer->setWidth($this->qrCodeDimensions['height'])
+				->setHeight($this->qrCodeDimensions['height']);
+
+				$writer = new \BaconQrCode\Writer($renderer);
+				$content = $writer->writeString(route('view/hardware', $asset->id));
+
+				$content_disposition = sprintf('attachment;filename=qr_code_%s.png', preg_replace('/\W/', '', $asset->asset_tag));
+				$response = Response::make($content, 200);
+				$response->header('Content-Type', 'image/png');
+				$response->header('Content-Disposition', $content_disposition);
+				return $response;
+			}
+		}
+
+		$response = Response::make('', 404);
+		return $response;
 	}
 
 	/**

@@ -13,16 +13,8 @@ Depreciation Report
 <div class="page-header">
 
 	<div class="pull-right">
-			<div class="btn-group settings">
-				<button class="btn glow"><i class="icon-download-alt"></i></button>
-				<button class="btn glow dropdown-toggle" data-toggle="dropdown">
-					<span class="caret"></span>
-				</button>
-				<ul class="dropdown-menu">
-					<li><a href="#">Download as CSV</a></li>
-					<li><a href="#">Download as PDF</a></li>
-				</ul>
-			</div>
+		<a href="{{ route('reports/export') }}" class="btn btn-flat gray pull-right"><i class="icon-download-alt"></i>
+		@lang('admin/hardware/table.dl_csv')</a>
 		</div>
 
 	<h3>Depreciation Report</h3>
@@ -42,7 +34,7 @@ Depreciation Report
 			<th class="col-sm-1">@lang('admin/hardware/table.eol')</th>
 			<th class="col-sm-1">@lang('admin/hardware/table.purchase_cost')</th>
 			<th class="col-sm-1">@lang('admin/hardware/table.book_value')</th>
-			<th class="col-sm-1">Diff</th>
+			<th class="col-sm-1">@lang('admin/hardware/table.diff')</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -75,9 +67,12 @@ Depreciation Report
 			</td>
 
 			@if ($asset->purchase_cost > 0)
-			<td class="align-right">${{ number_format($asset->purchase_cost) }}</td>
-			<td class="align-right">${{ number_format($asset->depreciate()) }}</td>
-			<td class="align-right">-${{ number_format(($asset->purchase_cost - $asset->depreciate())) }}</td>
+			<td class="align-right">@lang('general.currency_symbol')
+			{{ number_format($asset->purchase_cost) }}</td>
+			<td class="align-right">@lang('general.currency_symbol')
+			{{ number_format($asset->depreciate()) }}</td>
+			<td class="align-right">@lang('general.currency_symbol')
+			-{{ number_format(($asset->purchase_cost - $asset->depreciate())) }}</td>
 			@else
 			<td></td>
 			<td></td>

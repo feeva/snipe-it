@@ -1,10 +1,10 @@
-<a href='https://pledgie.com/campaigns/22899'><img alt='Click here to lend your support to: Snipe IT - Free Open Source Asset Management System and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/22899.png?skin_name=chrome' border='0' ></a>
+[![Click here to lend your support to: Snipe IT - Free Open Source Asset Management System and make a donation at pledgie.com](https://pledgie.com/campaigns/22899.png?skin_name=chrome)](https://pledgie.com/campaigns/22899) [![Build Status](https://travis-ci.org/snipe/snipe-it.svg?branch=develop)](https://travis-ci.org/snipe/snipe-it)
 
 ## Snipe-IT - Asset Management For the Rest of Us
 
 This is a FOSS project for asset management in IT Operations. Knowing who has which laptop, when it was purchased in order to depreciate it correctly, handling software licenses, etc.
 
-It is built on [Laravel 4](http://laravel.com) and uses the [Sentry 2](https://github.com/cartalyst/sentry) package.
+It is built on [Laravel 4.1](http://laravel.com) and uses the [Sentry 2](https://github.com/cartalyst/sentry) package.
 
 Many thanks to the [Laravel 4 starter site](https://github.com/brunogaspar/laravel4-starter-kit) for a quick start.
 
@@ -39,7 +39,7 @@ Forgetting to do this can mean your DB might end up out of sync with the new fil
 ### 1) Downloading
 #### 1.1) Clone the Repository
 
-	git clone http://github.com/snipe/snipe-it your-folder
+	git clone https://github.com/snipe/snipe-it your-folder
 
 #### 1.2) Download the Repository
 
@@ -47,29 +47,57 @@ Forgetting to do this can mean your DB might end up out of sync with the new fil
 
 -----
 
-### 2) Setup Database and Mail Settings
+### 2) Setup Environment, Database and Mail Settings
 
-#### 2.1) Setup Your Database
+#### 2.1) Adjust Environments
 
-Copy the example database config `app/config/local/database.example.php` to `database.php`.
+Update the file `boostrap/start.php` under the section `Detect The Application Environment`.
+
+	vi bootstrap/start.php
+
+-----
+
+__AS OF LARAVEL 4.1__
+Per the [Laravel 4.1 upgrade docs](http://laravel.com/docs/upgrade):
+
+__*"For security reasons, URL domains may no longer be used to detect your application environment. These values are easily spoofable and allow attackers to modify the environment for a request. You should convert your environment detection to use machine host names (hostname command on Mac & Ubuntu)."*__
+
+To find out your local machine's hostname, type `hostname` from a terminal prompt on the machine you're installing it on. The command-line response is that machine's hostname. Please note that the hostname is NOT always the same as the domain name.
+
+So for example, if you're installing this locally on your Mac named SnipeMBP, the environmental variable section of `bootstrap/start.php` might look like this:
+
+	$env = $app->detectEnvironment(array(
+		'local'		 	=> array('SnipeMBP'),
+		'staging' 		=> array('staging.mysite.com'),
+		'production' 	=> array('www.mysite.com')
+	));
+
+If your development, staging and production sites all run on the same server (which is generally a terrible idea), [see this example](http://words.weareloring.com/development/setting-up-multiple-environments-in-laravel-4-1/) of how to configure the app using environmental variables.
+
+-----
+
+#### 2.2) Setup Your Database
+
+Copy the example database config `app/config/local/database.example.php` to `app/config/local/database.php`.
 Update the file `app/config/local/database.php` with your database name and credentials.
 
     vi app/config/local/database.php
 
-#### 2.2) Setup Mail Settings
 
-Copy the example mail config `app/config/local/mail.example.php` to `mail.php`.
+#### 2.3) Setup Mail Settings
+
+Copy the example mail config `app/config/local/mail.example.php` to `app/config/local/mail.php`.
 Update the file `app/config/local/mail.php` with your mail settings.
 
     vi app/config/local/mail.php
 
 This will be used to send emails to your users, when they register and they request a password reset.
 
-#### 2.3) Adjust the application settings.
+#### 2.4) Adjust the application settings.
 
-Copy the example app config `app/config/local/app.example.php` to `app.php`.
+Copy the example app config `app/config/local/app.example.php` to `app/config/local/app.php`.
 
-Update the file `app/config/local/app.php` with your setting URL settings.
+Update the file `app/config/local/app.php` with your URL settings.
 
 	vi app/config/local/app.php
 
@@ -77,15 +105,10 @@ You should also change your secret key here -- if you prefer to have your key ra
 
 	php artisan key:generate --env=local
 
-#### 2.4) Adjust Environments
-
-Update the file `boostrap/start.php' under the section `Detect The Application Environment`.
-
-	vi bootstrap/start.php
 
 #### 2.5) Additional Adjustments
 
-The app is configured to automatically detect if you're in a local, staging, or production environment.  Before deploying to a staging or production environment, follow sets 2.1, 2.2, and 2.3 above to tweak each environment as nescessary.  Configuration files for each environment can be found in app/config/{environment} (local, staging, and production).
+The app is configured to automatically detect if you're in a local, staging, or production environment.  Before deploying to a staging or production environment, follow sets 2.1, 2.2, and 2.3 above to tweak each environment as necessary.  Configuration files for each environment can be found in app/config/{environment} (local, staging, and production).
 
 -----
 
@@ -93,7 +116,7 @@ The app is configured to automatically detect if you're in a local, staging, or 
 ##### 3.1) If you don't have composer installed globally
 
 	cd your-folder
-	curl -s http://getcomposer.org/installer | php
+	curl -sS https://getcomposer.org/installer | php
 	php composer.phar install
 
 ##### 3.2) For global composer installations
@@ -115,7 +138,7 @@ Use the following command to create your default user, user groups and run all t
 
 ### 6) Fix permissions
 
-You'll need to make sure that the app/storage directory is writable by your webserver, since caches and log files get written there. You should use the minimum permissions available for writing, based on how you've got your webserver configured.
+You'll need to make sure that the `app/storage` directory is writable by your webserver, since caches and log files get written there. You should use the minimum permissions available for writing, based on how you've got your webserver configured.
 
 	chmod -R 755 app/storage
 
@@ -130,10 +153,13 @@ If you still run into a permissions error, you may need to increase the permissi
 The document root for the app should be set to the public directory. In a standard Apache virtualhost setup, that might look something like this on a standard linux LAMP stack:
 
 	<VirtualHost *:80>
-    DocumentRoot /var/www/html/public
-    ServerName www.example.org
+		<Directory /var/www/html/public>
+			AllowOverride All
+		</Directory>
+		DocumentRoot /var/www/html/public
+	    	ServerName www.example.org
 
-    # Other directives here
+	    	# Other directives here
 	</VirtualHost>
 
 An OS X virtualhost setup could look more like:
@@ -176,6 +202,13 @@ The profiler is enabled by default if you have debug set to true in your app.php
 If you're doing any development on this, make sure you purge the auto-loader if you see any errors stating the new model you created can't be found, etc, otherwise your new models won't be grokked.
 
 	php composer.phar dump-autoload
+
+
+-----
+
+### Application logs
+
+Application logs for this app are found in `app/storage/logs`, as is customary of Laravel.
 
 -----
 
